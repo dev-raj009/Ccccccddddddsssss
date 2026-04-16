@@ -1,1 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpidyUniverse API Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --bg2: #13161e;
+      --bg3: #1a1e2a;
+      --card: #1e2230;
+      --border: #2a2f42;
+      --accent: #e63946;
+      --accent2: #ff6b6b;
+      --blue: #4a9eff;
+      --green: #2ecc71;
+      --yellow: #f1c40f;
+      --purple: #9b59b6;
+      --text: #e8eaf0;
+      --muted: #7a8099;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0d0f14 0%, #1a0a1e 50%, #0a0e1a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1300px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.3rem; font-weight: 800; letter-spacing: -0.5px;
+    }
+    .logo-spider { font-size: 1.5rem; }
+    .logo-accent { color: var(--accent); }
+    .header-badge {
+      background: rgba(230,57,70,0.15); color: var(--accent2);
+      border: 1px solid rgba(230,57,70,0.3);
+      padding: 3px 10px; border-radius: 20px; font-size: 0.7rem;
+      font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .header-nav { display: flex; align-items: center; gap: 1rem; }
+    .nav-link {
+      color: var(--muted); text-decoration: none; font-size: 0.85rem;
+      padding: 6px 14px; border-radius: 8px; transition: all 0.2s;
+    }
+    .nav-link:hover { color: var(--text); background: var(--card); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0d0f14, #1a0a1e 40%, #0a0e1a);
+      padding: 3.5rem 2rem 2.5rem;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: "🕷️";
+      position: absolute; font-size: 20rem; opacity: 0.02;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero h1 {
+      font-size: 2.8rem; font-weight: 800; letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent2) 60%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      margin-top: 0.6rem; color: var(--muted); font-size: 1rem; max-width: 500px;
+      margin-left: auto; margin-right: auto;
+    }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 2.5rem;
+      margin-top: 2rem;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num {
+      font-size: 2rem; font-weight: 800; color: var(--accent2);
+    }
+    .hero-stat .label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── MAIN ── */
+    main { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+    .section-title {
+      font-size: 1.1rem; font-weight: 700;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-title .icon { color: var(--accent); font-size: 1rem; }
+
+    /* ── ENDPOINT CARDS ── */
+    .endpoints-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem; margin-bottom: 2.5rem;
+    }
+    .endpoint-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.2rem;
+      transition: all 0.25s; cursor: pointer; text-decoration: none;
+      display: block;
+    }
+    .endpoint-card:hover {
+      border-color: var(--accent); transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(230,57,70,0.15);
+    }
+    .endpoint-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 0.7rem;
+    }
+    .method-badge {
+      padding: 3px 9px; border-radius: 6px; font-size: 0.7rem;
+      font-weight: 700; letter-spacing: 0.5px; font-family: 'JetBrains Mono', monospace;
+    }
+    .get { background: rgba(46,204,113,0.15); color: var(--green); border: 1px solid rgba(46,204,113,0.3); }
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem; color: var(--blue); font-weight: 600;
+    }
+    .endpoint-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── SEARCH BOX ── */
+    .search-section { margin-bottom: 2.5rem; }
+    .search-row {
+      display: flex; gap: 10px; margin-top: 0.8rem;
+    }
+    .search-input {
+      flex: 1; background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 16px; color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-select {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none;
+      cursor: pointer; min-width: 160px;
+    }
+    .btn {
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 10px; padding: 10px 22px; font-weight: 600;
+      font-size: 0.88rem; cursor: pointer; transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent; color: var(--blue);
+      border: 1px solid var(--blue);
+    }
+    .btn-outline:hover { background: rgba(74,158,255,0.1); }
+
+    /* ── BATCHES TABLE ── */
+    .batches-section { margin-bottom: 2.5rem; }
+    .filter-row {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.8rem 0;
+      margin-bottom: 1rem;
+    }
+    .filter-chip {
+      padding: 5px 14px; border-radius: 20px; font-size: 0.78rem;
+      font-weight: 500; cursor: pointer; border: 1px solid var(--border);
+      background: var(--card); color: var(--muted); transition: all 0.2s;
+    }
+    .filter-chip.active, .filter-chip:hover {
+      background: var(--accent); border-color: var(--accent); color: #fff;
+    }
+    .batch-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+    .batch-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.2rem;
+      transition: all 0.25s;
+    }
+    .batch-card:hover {
+      border-color: rgba(230,57,70,0.5);
+      box-shadow: 0 6px 24px rgba(230,57,70,0.1);
+    }
+    .batch-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 8px; margin-bottom: 0.8rem;
+    }
+    .batch-name { font-weight: 700; font-size: 0.95rem; line-height: 1.4; }
+    .batch-id-badge {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 6px; padding: 2px 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+      color: var(--muted); white-space: nowrap; flex-shrink: 0;
+    }
+    .batch-meta {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 0.9rem;
+    }
+    .meta-tag {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .meta-tag i { font-size: 0.7rem; }
+    .meta-tag.green { color: var(--green); }
+    .meta-tag.blue { color: var(--blue); }
+    .source-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: 600;
+    }
+    .source-spidy {
+      background: rgba(230,57,70,0.12); color: var(--accent2);
+      border: 1px solid rgba(230,57,70,0.25);
+    }
+    .source-cds {
+      background: rgba(74,158,255,0.1); color: var(--blue);
+      border: 1px solid rgba(74,158,255,0.2);
+    }
+    .batch-actions { display: flex; gap: 8px; }
+    .action-btn {
+      flex: 1; padding: 7px 0; border-radius: 8px; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+      font-family: 'Inter', sans-serif; text-align: center;
+    }
+    .action-primary {
+      background: rgba(230,57,70,0.15); color: var(--accent2);
+      border: 1px solid rgba(230,57,70,0.3);
+    }
+    .action-primary:hover { background: var(--accent); color: #fff; }
+    .action-secondary {
+      background: rgba(74,158,255,0.1); color: var(--blue);
+      border: 1px solid rgba(74,158,255,0.2);
+    }
+    .action-secondary:hover { background: rgba(74,158,255,0.2); }
+
+    /* ── API TESTER ── */
+    .tester-section { margin-bottom: 2.5rem; }
+    .tester-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .tester-input-row {
+      display: flex; align-items: center; gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tester-method {
+      background: rgba(46,204,113,0.1); color: var(--green);
+      padding: 12px 16px; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem; font-weight: 700; border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .tester-url {
+      flex: 1; background: transparent; border: none; color: var(--text);
+      padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+      outline: none;
+    }
+    .tester-send {
+      background: var(--accent); color: #fff; border: none;
+      padding: 12px 20px; cursor: pointer; font-weight: 600;
+      font-size: 0.85rem; transition: background 0.2s; white-space: nowrap;
+    }
+    .tester-send:hover { background: var(--accent2); }
+    .quick-routes {
+      display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .quick-chip {
+      padding: 4px 10px; border-radius: 6px; font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace; cursor: pointer;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); transition: all 0.2s;
+    }
+    .quick-chip:hover { color: var(--blue); border-color: var(--blue); }
+    .response-area {
+      padding: 16px; background: var(--bg);
+      font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+      color: var(--text); min-height: 160px; max-height: 450px;
+      overflow-y: auto; white-space: pre-wrap; line-height: 1.7;
+    }
+    .response-status {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-top: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--muted);
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .status-ok { background: var(--green); }
+    .status-err { background: var(--accent); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      z-index: 200; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; width: 90%; max-width: 760px;
+      max-height: 85vh; overflow-y: auto;
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg2);
+    }
+    .modal-title { font-size: 1rem; font-weight: 700; }
+    .modal-close {
+      background: var(--card); border: none; color: var(--muted);
+      width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+      font-size: 1rem; transition: all 0.2s;
+    }
+    .modal-close:hover { color: var(--text); background: var(--border); }
+    .modal-body { padding: 1.5rem; }
+    .modal-meta {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .meta-box {
+      background: var(--card); border-radius: 10px; padding: 1rem;
+      border: 1px solid var(--border);
+    }
+    .meta-box .label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .meta-box .value { font-size: 1.3rem; font-weight: 700; margin-top: 4px; }
+    .subjects-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+    .subject-tag {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; color: var(--text);
+    }
+    .video-list { display: flex; flex-direction: column; gap: 6px; }
+    .video-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border-radius: 8px; padding: 8px 12px;
+      font-size: 0.82rem; transition: all 0.2s;
+    }
+    .video-item:hover { border-color: rgba(230,57,70,0.4); }
+    .video-num {
+      color: var(--muted); font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; min-width: 28px;
+    }
+    .video-subject-tag {
+      background: rgba(230,57,70,0.1); color: var(--accent2);
+      border-radius: 4px; padding: 2px 7px; font-size: 0.68rem; font-weight: 600;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .video-title { flex: 1; color: var(--text); }
+    .video-link {
+      color: var(--blue); text-decoration: none; font-size: 0.75rem;
+      padding: 3px 8px; border-radius: 5px; border: 1px solid rgba(74,158,255,0.3);
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .video-link:hover { background: rgba(74,158,255,0.1); }
+    .search-results { margin-top: 1rem; }
+    .sr-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem; margin-bottom: 8px;
+    }
+    .sr-batch { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+    .sr-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+    .sr-subject { color: var(--accent2); font-size: 0.78rem; }
+    .sr-link { display: block; margin-top: 6px; }
+    .loading { text-align: center; color: var(--muted); padding: 2rem; }
+    .spinner { animation: spin 0.8s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; color: var(--muted); padding: 3rem 1rem; }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+    /* JSON syntax highlighting */
+    .json-key { color: #ff6b6b; }
+    .json-str { color: #98d4a8; }
+    .json-num { color: #f0c674; }
+    .json-bool { color: #81a2be; }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { gap: 1.5rem; }
+      .modal-meta { grid-template-columns: 1fr; }
+      .search-row { flex-direction: column; }
+      .header-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-spider">🕷️</span>
+      <span>Spidy<span class="logo-accent">Universe</span></span>
+      <span class="header-badge">API v1.0</span>
+    </div>
+    <nav class="header-nav">
+      <a href="#endpoints" class="nav-link">Endpoints</a>
+      <a href="#batches" class="nav-link">Batches</a>
+      <a href="#tester" class="nav-link">API Tester</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <h1>SpidyUniverse API</h1>
+  <p>Access all CDS / NDA / AFCAT / CAPF batch video data through a clean REST API</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num" id="stat-batches">12</div>
+      <div class="label">Total Batches</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num" id="stat-videos">—</div>
+      <div class="label">Total Videos</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">2</div>
+      <div class="label">Platforms</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">5</div>
+      <div class="label">Routes</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main>
+
+  <!-- ENDPOINTS -->
+  <section id="endpoints">
+    <div class="section-header">
+      <div class="section-title"><i class="fas fa-plug icon"></i> API Endpoints</div>
+    </div>
+    <div class="endpoints-grid">
+      <a class="endpoint-card" onclick="testRoute('/API/batches')">
+        <div class="endpoint-top">
+          <span class="method-badge get">GET</span>
+          <span class="endpoint-path">/API/batches</span>
+        </div>
+        <div class="endpoint-desc">Returns full list of all available batches with ID, name, price, and source platform.</div>
+      </a>
+      <a class="endpoint-card" onclick="testRoute('/API/batch/78')">
+        <div class="endpoint-top">
+          <span class="method-badge get">GET</span>
+          <span class="endpoint-path">/API/batch/:id</span>
+        </div>
+        <div class="endpoint-desc">Returns full batch detail — total videos, subjects list, and all video links grouped by subject.</div>
+      </a>
+      <a class="endpoint-card" onclick="testRoute('/API/subjects/39')">
+        <div class="endpoint-top">
+          <span class="method-badge get">GET</span>
+          <span class="endpoint-path">/API/subjects/:id</span>
+        </div>
+        <div class="endpoint-desc">Returns subject-wise video count for a given batch ID. Quick overview without full video list.</div>
+      </a>
+      <a class="endpoint-card" onclick="testRoute('/API/search?q=maths')">
+        <div class="endpoint-top">
+          <span class="method-badge get">GET</span>
+          <span class="endpoint-path">/API/search?q=</span>
+        </div>
+        <div class="endpoint-desc">Search videos across all batches by title/subject. Optional <code>batch_id</code> param to narrow to one batch.</div>
+      </a>
+      <a class="endpoint-card" onclick="testRoute('/API/stats')">
+        <div class="endpoint-top">
+          <span class="method-badge get">GET</span>
+          <span class="endpoint-path">/API/stats</span>
+        </div>
+        <div class="endpoint-desc">Returns global stats — total batches, total videos, and breakdown by platform.</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="search-section" id="search">
+    <div class="section-header">
+      <div class="section-title"><i class="fas fa-search icon"></i> Search Videos</div>
+    </div>
+    <div class="search-row">
+      <input class="search-input" id="searchQ" placeholder="Search for classes e.g. Percentage, Geography, Tense..." />
+      <select class="search-select" id="searchBatch">
+        <option value="">All Batches</option>
+      </select>
+      <button class="btn" onclick="doSearch()"><i class="fas fa-search"></i> Search</button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </section>
+
+  <!-- BATCHES -->
+  <section class="batches-section" id="batches">
+    <div class="section-header">
+      <div class="section-title"><i class="fas fa-layer-group icon"></i> All Batches</div>
+    </div>
+    <div class="filter-row" id="filterRow">
+      <span class="filter-chip active" onclick="filterBatches('all', this)">All</span>
+      <span class="filter-chip" onclick="filterBatches('spidyuniverse', this)">SpidyUniverse</span>
+      <span class="filter-chip" onclick="filterBatches('cdsjourney', this)">CDS Journey</span>
+    </div>
+    <div class="batch-grid" id="batchGrid">
+      <div class="loading"><i class="fas fa-spider spinner"></i> Loading batches...</div>
+    </div>
+  </section>
+
+  <!-- API TESTER -->
+  <section class="tester-section" id="tester">
+    <div class="section-header">
+      <div class="section-title"><i class="fas fa-terminal icon"></i> API Tester</div>
+    </div>
+    <div class="tester-box">
+      <div class="tester-input-row">
+        <span class="tester-method">GET</span>
+        <input class="tester-url" id="testerUrl" value="/API/batches" />
+        <button class="tester-send" onclick="sendRequest()"><i class="fas fa-paper-plane"></i> Send</button>
+      </div>
+      <div class="quick-routes" id="quickRoutes">
+        <span class="quick-chip" onclick="setRoute('/API/batches')">/API/batches</span>
+        <span class="quick-chip" onclick="setRoute('/API/stats')">/API/stats</span>
+        <span class="quick-chip" onclick="setRoute('/API/batch/78')">/API/batch/78</span>
+        <span class="quick-chip" onclick="setRoute('/API/batch/39')">/API/batch/39</span>
+        <span class="quick-chip" onclick="setRoute('/API/subjects/39')">/API/subjects/39</span>
+        <span class="quick-chip" onclick="setRoute('/API/search?q=maths')">/API/search?q=maths</span>
+        <span class="quick-chip" onclick="setRoute('/API/search?q=geography&batch_id=78')">/API/search?q=geography</span>
+      </div>
+      <div class="response-area" id="responseArea">// Click "Send" or an endpoint card above to see the response here</div>
+      <div class="response-status" id="responseStatus">
+        <span class="status-dot"></span>
+        <span>Ready</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── BATCH DETAIL MODAL ── -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Batch Detail</div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="loading"><i class="fas fa-spider spinner"></i> Loading...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Data ──
+  let allBatches = [];
+  let allDetails = {};
+  let currentFilter = 'all';
+
+  // ── Boot ──
+  window.addEventListener('DOMContentLoaded', async () => {
+    await loadData();
+    renderBatches(allBatches);
+    populateSearchSelect();
+    loadStats();
+  });
+
+  async function loadData() {
+    try {
+      const br = await fetch('/API/batches');
+      const bd = await br.json();
+      allBatches = bd.batches || [];
+    } catch(e) {
+      console.error('Failed to load batches', e);
+    }
+  }
+
+  async function loadStats() {
+    try {
+      const r = await fetch('/API/stats');
+      const d = await r.json();
+      if (d.stats) {
+        document.getElementById('stat-batches').textContent = d.stats.total_batches;
+        document.getElementById('stat-videos').textContent = d.stats.total_videos.toLocaleString();
+      }
+    } catch(e) {}
+  }
+
+  function populateSearchSelect() {
+    const sel = document.getElementById('searchBatch');
+    allBatches.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.id;
+      opt.textContent = `#${b.id} – ${b.name.slice(0, 35)}...`;
+      sel.appendChild(opt);
+    });
+  }
+
+  // ── Render Batches ──
+  function renderBatches(batches) {
+    const grid = document.getElementById('batchGrid');
+    if (!batches.length) {
+      grid.innerHTML = '<div class="empty-state"><div class="icon">🕷️</div><div>No batches found</div></div>';
+      return;
+    }
+    grid.innerHTML = batches.map(b => `
+      <div class="batch-card" data-source="${b.source}">
+        <div class="batch-header">
+          <div class="batch-name">${b.name}</div>
+          <div class="batch-id-badge">#${b.id}</div>
+        </div>
+        <div class="batch-meta">
+          <span class="meta-tag green"><i class="fas fa-tag"></i> ${b.price}</span>
+          <span class="source-badge ${b.source === 'spidyuniverse' ? 'source-spidy' : 'source-cds'}">
+            ${b.source === 'spidyuniverse' ? '🕷️ SpidyUniverse' : '📚 CDS Journey'}
+          </span>
+        </div>
+        <div class="batch-actions">
+          <button class="action-btn action-primary" onclick="openBatchModal(${b.id}, '${b.name.replace(/'/g,"\\'")}')">
+            <i class="fas fa-play-circle"></i> View Videos
+          </button>
+          <button class="action-btn action-secondary" onclick="testRoute('/API/batch/${b.id}')">
+            <i class="fas fa-code"></i> API
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterBatches(source, el) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    currentFilter = source;
+    const filtered = source === 'all' ? allBatches : allBatches.filter(b => b.source === source);
+    renderBatches(filtered);
+  }
+
+  // ── Batch Modal ──
+  async function openBatchModal(id, name) {
+    const overlay = document.getElementById('modalOverlay');
+    const body = document.getElementById('modalBody');
+    const title = document.getElementById('modalTitle');
+    title.textContent = name;
+    body.innerHTML = '<div class="loading"><i class="fas fa-spider spinner"></i> Loading batch data...</div>';
+    overlay.classList.add('open');
+
+    try {
+      const r = await fetch(`/API/batch/${id}`);
+      const d = await r.json();
+      if (!d.success) throw new Error(d.error);
+      const batch = d.data;
+
+      const subjectsHtml = batch.subjects.map(s => `
+        <span class="subject-tag">${s} (${(batch.videos_by_subject[s]||[]).length})</span>
+      `).join('');
+
+      const videosHtml = batch.videos.map(v => `
+        <div class="video-item">
+          <span class="video-num">${v.index}</span>
+          <span class="video-subject-tag">${v.subject || 'General'}</span>
+          <span class="video-title">${v.title}</span>
+          <a class="video-link" href="${v.url}" target="_blank"><i class="fas fa-play"></i> Watch</a>
+        </div>
+      `).join('');
+
+      body.innerHTML = `
+        <div class="modal-meta">
+          <div class="meta-box">
+            <div class="label">Total Videos</div>
+            <div class="value" style="color:var(--accent2)">${batch.total_videos}</div>
+          </div>
+          <div class="meta-box">
+            <div class="label">Total Subjects</div>
+            <div class="value" style="color:var(--blue)">${batch.total_subjects}</div>
+          </div>
+        </div>
+        <div class="section-title" style="margin-bottom:0.8rem;font-size:0.85rem">
+          <i class="fas fa-book icon"></i> Subjects
+        </div>
+        <div class="subjects-list">${subjectsHtml}</div>
+        <div class="section-title" style="margin-bottom:0.8rem;font-size:0.85rem">
+          <i class="fas fa-video icon"></i> All Videos
+        </div>
+        <div class="video-list">${videosHtml}</div>
+      `;
+    } catch(e) {
+      body.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div>${e.message}</div>`;
+    }
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modalOverlay'))
+      document.getElementById('modalOverlay').classList.remove('open');
+  }
+  function closeModalDirect() {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  // ── Search ──
+  async function doSearch() {
+    const q = document.getElementById('searchQ').value.trim();
+    const batchId = document.getElementById('searchBatch').value;
+    const resultsDiv = document.getElementById('searchResults');
+
+    if (!q) { resultsDiv.innerHTML = ''; return; }
+
+    resultsDiv.innerHTML = '<div class="loading"><i class="fas fa-spider spinner"></i> Searching...</div>';
+
+    try {
+      let url = `/API/search?q=${encodeURIComponent(q)}`;
+      if (batchId) url += `&batch_id=${batchId}`;
+      const r = await fetch(url);
+      const d = await r.json();
+
+      if (!d.total_results) {
+        resultsDiv.innerHTML = `<div class="empty-state"><div class="icon">🔍</div>No results for "${q}"</div>`;
+        return;
+      }
+
+      resultsDiv.innerHTML = `
+        <div style="color:var(--muted);font-size:0.8rem;margin-bottom:0.8rem">
+          Found <strong style="color:var(--text)">${d.total_results}</strong> result(s) for "<strong style="color:var(--accent2)">${q}</strong>"
+        </div>
+        ${d.results.map(r => `
+          <div class="sr-item">
+            <div class="sr-batch"><i class="fas fa-layer-group"></i> ${r.batch_name} · #${r.batch_id}</div>
+            <div class="sr-title">${r.title}</div>
+            <div class="sr-subject">📂 ${r.subject || 'General'}</div>
+            <a class="video-link sr-link" href="${r.url}" target="_blank">
+              <i class="fas fa-play"></i> Watch Class
+            </a>
+          </div>
+        `).join('')}
+      `;
+    } catch(e) {
+      resultsDiv.innerHTML = `<div class="empty-state">Error: ${e.message}</div>`;
+    }
+  }
+
+  document.getElementById('searchQ').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  // ── API Tester ──
+  function setRoute(r) {
+    document.getElementById('testerUrl').value = r;
+    sendRequest();
+  }
+
+  function testRoute(r) {
+    document.getElementById('testerUrl').value = r;
+    document.getElementById('tester').scrollIntoView({ behavior: 'smooth' });
+    sendRequest();
+  }
+
+  async function sendRequest() {
+    const url = document.getElementById('testerUrl').value.trim();
+    const area = document.getElementById('responseArea');
+    const status = document.getElementById('responseStatus');
+    const start = Date.now();
+
+    area.textContent = '// Sending request...';
+
+    try {
+      const r = await fetch(url);
+      const json = await r.json();
+      const ms = Date.now() - start;
+      area.innerHTML = syntaxHighlight(JSON.stringify(json, null, 2));
+      status.innerHTML = `
+        <span class="status-dot ${r.ok ? 'status-ok' : 'status-err'}"></span>
+        <span>Status: ${r.status} ${r.statusText} · ${ms}ms</span>
+      `;
+    } catch(e) {
+      area.textContent = '// Error: ' + e.message;
+      status.innerHTML = '<span class="status-dot status-err"></span><span>Request failed</span>';
+    }
+  }
+
+  function syntaxHighlight(json) {
+    return json
+      .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+        let cls = 'json-num';
+        if (/^"/.test(match)) {
+          cls = /:$/.test(match) ? 'json-key' : 'json-str';
+        } else if (/true|false/.test(match)) {
+          cls = 'json-bool';
+        }
+        return `<span class="${cls}">${match}</span>`;
+      });
+  }
+
+  // update quick chips with actual IDs once batches loaded
+  function updateQuickChips() {
+    const spidy = allBatches.filter(b => b.source === 'spidyuniverse');
+    const cds = allBatches.filter(b => b.source === 'cdsjourney');
+    const qr = document.getElementById('quickRoutes');
+    const extra = [];
+    if (spidy[0]) extra.push(`<span class="quick-chip" onclick="setRoute('/API/batch/${spidy[0].id}')">/API/batch/${spidy[0].id} (SpidyUniverse)</span>`);
+    if (cds[0]) extra.push(`<span class="quick-chip" onclick="setRoute('/API/batch/${cds[0].id}')">/API/batch/${cds[0].id} (CDS Journey)</span>`);
+  }
+</script>
+
+</body>
+</html>
 
