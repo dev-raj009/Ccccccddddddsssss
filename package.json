@@ -1,0 +1,20 @@
+{
+  "name": "spidyuniverse-api",
+  "version": "1.0.0",
+  "description": "SpidyUniverse Batch API - Access all CDS/NDA/AFCAT/CAPF batch video data",
+  "main": "api/server.js",
+  "scripts": {
+    "start": "node api/server.js",
+    "dev": "nodemon api/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["spidyuniverse", "cds", "nda", "afcat", "capf", "api"],
+  "author": "SpidyUniverse",
+  "license": "MIT"
+}
