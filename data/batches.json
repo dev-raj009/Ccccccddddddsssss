@@ -1,0 +1,89 @@
+{
+  "total": 12,
+  "batches": [
+    {
+      "id": 44,
+      "name": "GOLF OTA BATCH (CDS-2 2026)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 46,
+      "name": "GOLF MATH BATCH (CDS-2 2026)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 45,
+      "name": "HOTEL BATCH (NDA-2 2026)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 47,
+      "name": "FOXTROT BATCH (AFCAT 2 2026)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 43,
+      "name": "ECHO BATCH (AFCAT 2 2026)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 39,
+      "name": "CAPF Paper 1 + Paper 2 Delta batch (CAPF 2026)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 40,
+      "name": "CAPF Paper 2 Delta batch (CAPF 2026)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 28,
+      "name": "Example batch 1 - Testing (not for sale)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "cdsjourney"
+    },
+    {
+      "id": 78,
+      "name": "NDA-2 2025 Full Batch",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "spidyuniverse"
+    },
+    {
+      "id": 56,
+      "name": "AFCAT-2 2025 Batch",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "spidyuniverse"
+    },
+    {
+      "id": 120,
+      "name": "Maths Classes (CDS-2 2025)",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "spidyuniverse"
+    },
+    {
+      "id": 112,
+      "name": "CDS-2 2025 Batch",
+      "price": "Free",
+      "thumbnail": "",
+      "source": "spidyuniverse"
+    }
+  ]
+}
